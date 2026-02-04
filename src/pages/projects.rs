@@ -89,7 +89,7 @@ pub fn Projects() -> impl IntoView {
                     "consuming and organizing the content of your choosing."
                 </p>
                 <p>
-                    "Right now, Prita is just a passion project developed entirely by me over the course of 2025. "
+                    "Right now, Prita is just a passion project developed almost entirely by me over the course of 2025. "
                     "I plan to release a beta when I finish the (rather large) MVP. "
                     "If this sounds interesting and you want to get notified when something actually happens, "
                     "you can add yourself to the mailing list at " <a href="https://prita.app">"prita.app"</a>
