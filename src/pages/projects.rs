@@ -57,6 +57,46 @@ pub fn Projects() -> impl IntoView {
 
         <ul class="projects-list">
             <Project
+                name="Cosma"
+                timeframe="2025 \u{2013} present"
+                github="cosmasense/cosma"
+                image="/cosma.webp"
+                id="cosma"
+            >
+                <p>
+                    "Cosma is an AI-powered local seach engine for your files."
+                </p>
+                <p>
+                    "Starting as a project for UW Madison's 2025 Summer of AI Laboratory, Cosma's development "
+                    "continued into the fall as we refined for production deployment and "
+                    "developed a MacOS app to make file search more accessible."
+                </p>
+                <p>
+                    "Cosma's main selling point is its extremely fast semantic search across all your files, "
+                    "meaning you can describe the ideas and concepts within your files instead of exact keyword matches. "
+                    "By default, it also processes all your files 100% on-device with local LLMs and embedded models."
+                </p>
+            </Project>
+            <Project
+                name="Prita"
+                timeframe="2025 \u{2013} present"
+                image="/prita.webp"
+                id="prita"
+            >
+                <p>
+                    "Prita is an in-development read-it-later and content organization tool built for speed and ease-of-use. "
+                    "It's designed to stay as out of your way as possible, providing the simplest gateway to "
+                    "consuming and organizing the content of your choosing."
+                </p>
+                <p>
+                    "Right now, Prita is just a passion project developed entirely by me over the course of 2025. "
+                    "I plan to release a beta when I finish the (rather large) MVP. "
+                    "If this sounds interesting and you want to get notified when something actually happens, "
+                    "you can add yourself to the mailing list at " <a href="https://prita.app">"prita.app"</a>
+                    ". I haven't sent out a single email yet and honestly don't plan to, so don't worry about getting spammed."
+                </p>
+            </Project>
+            <Project
                 name="This site"
                 timeframe="2023 \u{2013} present"
                 github="chmltn/site"
