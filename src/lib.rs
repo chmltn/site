@@ -1,7 +1,3 @@
-
-#![feature(result_flattening)]
-
-
 pub mod app;
 pub mod pages;
 pub mod utils;

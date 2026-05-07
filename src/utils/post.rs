@@ -1,12 +1,12 @@
 use cfg_if::cfg_if;
-use comrak::{ExtensionOptions, Options};
+use comrak::{options::Extension, Options};
 use lazy_static::lazy_static;
 use leptos::prelude::*;
 use serde::{Deserialize, Serialize};
 
 lazy_static! {
     static ref COMRAK_OPTIONS: Options<'static> = Options {
-        extension: ExtensionOptions {
+        extension: Extension {
             strikethrough: true,
             table: true,
             autolink: true,
@@ -25,10 +25,11 @@ cfg_if! {
 if #[cfg(feature = "ssr")] {
     use crate::utils::errors::LoadingError;
     use syntect::highlighting::ThemeSet;
+    use std::borrow::Cow;
     use std::collections::HashMap;
-    use std::io::{self, Write};
+    use std::fmt;
     use std::ops::Add;
-    use comrak::{plugins::syntect::{SyntectAdapter, SyntectAdapterBuilder}, ComrakPlugins, ComrakRenderPlugins};
+    use comrak::plugins::syntect::{SyntectAdapter, SyntectAdapterBuilder};
     use comrak::adapters::SyntaxHighlighterAdapter;
 
     struct DualThemeAdapter {
@@ -51,47 +52,47 @@ if #[cfg(feature = "ssr")] {
     impl SyntaxHighlighterAdapter for DualThemeAdapter {
         fn write_highlighted(
             &self,
-            output: &mut dyn Write,
+            output: &mut dyn fmt::Write,
             lang: Option<&str>,
             code: &str,
-        ) -> io::Result<()> {
-            output.write_all(b"<span class=\"hl-dark\">")?;
+        ) -> fmt::Result {
+            output.write_str("<span class=\"hl-dark\">")?;
             self.dark.write_highlighted(output, lang, code)?;
-            output.write_all(b"</span><span class=\"hl-light\">")?;
+            output.write_str("</span><span class=\"hl-light\">")?;
             self.light.write_highlighted(output, lang, code)?;
-            output.write_all(b"</span>")
+            output.write_str("</span>")
         }
 
         fn write_pre_tag(
             &self,
-            output: &mut dyn Write,
-            attributes: HashMap<String, String>,
-        ) -> io::Result<()> {
+            output: &mut dyn fmt::Write,
+            attributes: HashMap<&'static str, Cow<'_, str>>,
+        ) -> fmt::Result {
             write_open_tag(output, "pre", &attributes)
         }
 
         fn write_code_tag(
             &self,
-            output: &mut dyn Write,
-            attributes: HashMap<String, String>,
-        ) -> io::Result<()> {
+            output: &mut dyn fmt::Write,
+            attributes: HashMap<&'static str, Cow<'_, str>>,
+        ) -> fmt::Result {
             write_open_tag(output, "code", &attributes)
         }
     }
 
     fn write_open_tag(
-        output: &mut dyn Write,
+        output: &mut dyn fmt::Write,
         tag: &str,
-        attributes: &HashMap<String, String>,
-    ) -> io::Result<()> {
+        attributes: &HashMap<&'static str, Cow<'_, str>>,
+    ) -> fmt::Result {
         write!(output, "<{}", tag)?;
-        let mut keys: Vec<&String> = attributes.keys().collect();
+        let mut keys: Vec<&&'static str> = attributes.keys().collect();
         keys.sort();
         for k in keys {
             let v = &attributes[k];
             write!(output, " {}=\"{}\"", k, escape_attr(v))?;
         }
-        output.write_all(b">")
+        output.write_str(">")
     }
 
     fn escape_attr(s: &str) -> String {
@@ -192,7 +193,7 @@ if #[cfg(feature = "ssr")] {
 
             let counter = traverse(root)
                 .map(|node| match node.data.borrow().value {
-                    comrak::nodes::NodeValue::Text(ref s) => PostCounter::from_string(s.clone()),
+                    comrak::nodes::NodeValue::Text(ref s) => PostCounter::from_string(s.to_string()),
                     comrak::nodes::NodeValue::Code(ref code) => PostCounter::from_string(code.literal.clone()),
                     comrak::nodes::NodeValue::CodeBlock(ref code) => PostCounter::from_string(code.literal.clone()),
                     _ => PostCounter::empty(),
@@ -241,8 +242,8 @@ pub async fn get_post(id: String) -> Result<Option<Post>, ServerFnError> {
     let post = match tokio::fs::read_to_string(format!("posts/{}.md", id)).await {
         Ok(p) => {
             let adapter = DualThemeAdapter::new("Catppuccin-Mocha", "Catppuccin-Latte");
-            let plugins = ComrakPlugins {
-                render: ComrakRenderPlugins {
+            let plugins = comrak::options::Plugins {
+                render: comrak::options::RenderPlugins {
                     codefence_syntax_highlighter: Some(&adapter),
                     ..Default::default()
                 },

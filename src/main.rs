@@ -31,7 +31,7 @@ async fn main() {
             move || shell(leptos_options.clone())
         })
         .route("/blog/feed.rss", get(feed))
-        .route("/blog/post/:post", get(post_redirect))
+        .route("/blog/post/{post}", get(post_redirect))
         .fallback(leptos_axum::file_and_error_handler(shell))
         .with_state(leptos_options)
         .layer(ServiceBuilder::new().layer(TraceLayer::new_for_http()));
