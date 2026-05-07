@@ -4,7 +4,8 @@
 	--font-line-height: 1.5;
 	--color-bg-1: #272838;
 	--color-bg-2: #07393C;
-	--color-bg-code: #1d1f29;
+	--color-bg-code: #1e1e2e;
+	--color-text-code: #cdd6f4;
 	--color-text: rgb(240, 240, 240);
 	--color-text-content: rgb(220, 220, 220);
 	--color-text-muted: rgba(220, 220, 220, 0.65);
@@ -17,6 +18,18 @@
 	color: var(--color-text);
 	scroll-behavior: smooth;
 	font-size: 18px;
+}
+
+[data-theme="light"] {
+	--color-bg-1: #f8f8fa;
+	--color-bg-2: #e0eeef;
+	--color-bg-code: #eff1f5;
+	--color-text-code: #4c4f69;
+	--color-text: #1a1a2e;
+	--color-text-content: #2d2d3d;
+	--color-text-muted: rgba(45, 45, 60, 0.65);
+	--color-theme-1: #c96b5d;
+	--color-theme-2: #5e5f79;
 }
 
 @supports (font-variation-settings: normal) {
@@ -77,6 +90,7 @@ a:hover {
 code {
 	font-family: var(--font-mono);
 	background-color: var(--color-bg-code);
+	color: var(--color-text-code);
 	border-radius: 0.25rem;
 	padding: 0.2rem 0.3rem;
 }
@@ -88,13 +102,15 @@ pre {
 		font-family: var(--font-mono);
 		display: block;
 		overflow-x: auto;
-		// TODO: there's a quirk of Comrak/syntect where it adds
-		// an extra newline at the beginning and end of the code
-		//  element, causing some extra padding to appear.
-		// I should probably actually fix this instead of just
-		// using the line height but whatever I guess
-		padding: 0 1.5rem;
+		padding: 0.75rem 1.5rem;
 	}
+
+	.hl-light { display: none; }
+}
+
+[data-theme="light"] pre {
+	.hl-dark { display: none; }
+	.hl-light { display: inline; }
 }
 
 .text-column {
@@ -179,6 +195,35 @@ nav {
 			}
 		}
 	}
+
+}
+
+.theme-toggle {
+	background: none;
+	border: none;
+	cursor: pointer;
+	color: var(--color-text-muted);
+	padding: 0;
+	display: inline-flex;
+	align-items: center;
+	vertical-align: -.125em;
+
+	svg {
+		width: 1em;
+		height: 1em;
+	}
+
+	.icon-light,
+	.icon-dark,
+	.icon-auto {
+		display: none;
+	}
+}
+
+[data-preference="light"] .theme-toggle .icon-light,
+[data-preference="dark"] .theme-toggle .icon-dark,
+[data-preference="auto"] .theme-toggle .icon-auto {
+	display: inline-flex;
 }
 
 .app {
@@ -466,5 +511,12 @@ footer {
 
 	.skeleton-text {
 		margin: 1rem 0;
+	}
+}
+
+[data-theme="light"] {
+	footer img,
+	.project-header a img {
+		filter: invert(1);
 	}
 }

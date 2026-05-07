@@ -25,8 +25,78 @@ cfg_if! {
 if #[cfg(feature = "ssr")] {
     use crate::utils::errors::LoadingError;
     use syntect::highlighting::ThemeSet;
+    use std::collections::HashMap;
+    use std::io::{self, Write};
     use std::ops::Add;
-    use comrak::{plugins::syntect::SyntectAdapterBuilder, ComrakPlugins, ComrakRenderPlugins};
+    use comrak::{plugins::syntect::{SyntectAdapter, SyntectAdapterBuilder}, ComrakPlugins, ComrakRenderPlugins};
+    use comrak::adapters::SyntaxHighlighterAdapter;
+
+    struct DualThemeAdapter {
+        dark: SyntectAdapter,
+        light: SyntectAdapter,
+    }
+
+    impl DualThemeAdapter {
+        fn new(dark: &str, light: &str) -> Self {
+            let build = |name: &str| {
+                SyntectAdapterBuilder::new()
+                    .theme_set(ThemeSet::load_from_folder("vendor").unwrap())
+                    .theme(name)
+                    .build()
+            };
+            Self { dark: build(dark), light: build(light) }
+        }
+    }
+
+    impl SyntaxHighlighterAdapter for DualThemeAdapter {
+        fn write_highlighted(
+            &self,
+            output: &mut dyn Write,
+            lang: Option<&str>,
+            code: &str,
+        ) -> io::Result<()> {
+            output.write_all(b"<span class=\"hl-dark\">")?;
+            self.dark.write_highlighted(output, lang, code)?;
+            output.write_all(b"</span><span class=\"hl-light\">")?;
+            self.light.write_highlighted(output, lang, code)?;
+            output.write_all(b"</span>")
+        }
+
+        fn write_pre_tag(
+            &self,
+            output: &mut dyn Write,
+            attributes: HashMap<String, String>,
+        ) -> io::Result<()> {
+            write_open_tag(output, "pre", &attributes)
+        }
+
+        fn write_code_tag(
+            &self,
+            output: &mut dyn Write,
+            attributes: HashMap<String, String>,
+        ) -> io::Result<()> {
+            write_open_tag(output, "code", &attributes)
+        }
+    }
+
+    fn write_open_tag(
+        output: &mut dyn Write,
+        tag: &str,
+        attributes: &HashMap<String, String>,
+    ) -> io::Result<()> {
+        write!(output, "<{}", tag)?;
+        let mut keys: Vec<&String> = attributes.keys().collect();
+        keys.sort();
+        for k in keys {
+            let v = &attributes[k];
+            write!(output, " {}=\"{}\"", k, escape_attr(v))?;
+        }
+        output.write_all(b">")
+    }
+
+    fn escape_attr(s: &str) -> String {
+        s.replace('&', "&amp;").replace('"', "&quot;").replace('<', "&lt;")
+    }
 
 
     pub async fn load_posts() -> Result<Vec<PostMetadata>, LoadingError> {
@@ -170,11 +240,7 @@ pub struct PostMetadata {
 pub async fn get_post(id: String) -> Result<Option<Post>, ServerFnError> {
     let post = match tokio::fs::read_to_string(format!("posts/{}.md", id)).await {
         Ok(p) => {
-            let theme_set = ThemeSet::load_from_folder("vendor").unwrap();
-            let adapter = SyntectAdapterBuilder::new()
-                .theme_set(theme_set)
-                .theme("Enki-Tokyo-Night")
-                .build();
+            let adapter = DualThemeAdapter::new("Catppuccin-Mocha", "Catppuccin-Latte");
             let plugins = ComrakPlugins {
                 render: ComrakRenderPlugins {
                     codefence_syntax_highlighter: Some(&adapter),
