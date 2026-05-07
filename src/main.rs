@@ -1,3 +1,5 @@
+#![recursion_limit = "256"]
+
 use cfg_if::cfg_if;
 
 #[cfg(feature = "ssr")]
