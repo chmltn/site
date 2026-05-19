@@ -69,7 +69,7 @@ pub fn Projects() -> impl IntoView {
                 <p>
                     "Starting as a project for UW Madison's 2025 Summer of AI Laboratory, Cosma's development "
                     "continued into the fall as we refined for production deployment and "
-                    "developed a MacOS app to make file search more accessible."
+                    "developed a MacOS app to mcake file search more accessible."
                 </p>
                 <p>
                     "Cosma's main selling point is its extremely fast semantic search across all your files, "
@@ -90,7 +90,7 @@ pub fn Projects() -> impl IntoView {
                 </p>
                 <p>
                     "Right now, Prita is just a passion project developed almost entirely by me over the course of 2025. "
-                    "I plan to release a beta when I finish the (rather large) MVP. "
+                    "I plan to release a beta when I finish the MVP. "
                     "If this sounds interesting and you want to get notified when something actually happens, "
                     "you can add yourself to the mailing list at " <a href="https://prita.app">"prita.app"</a>
                     ". I haven't sent out a single email yet and honestly don't plan to, so don't worry about getting spammed."

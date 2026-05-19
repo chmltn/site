@@ -7,12 +7,12 @@ pub fn Home() -> impl IntoView {
     view! {
         <PageMeta title="Caleb Hamilton" description="Caleb's personal website" />
 
-        <h1>"Welcome"</h1>
+        <h1>"Hi, I'm Caleb!"</h1>
 
-        <p>"I'm Caleb."</p>
         <p>
-            "I'm currently a student at the University of Wisconsin - Madison "
-            "studying computer science. I love learning new languages, tools, and technologies, "
+            "I'm an engineer based in Madison, WI. "
+            "I studied computer science and math at UW-Madison, and I currently work across the stack on backend, mobile, "
+            "infrastructure, and web. I always love learning new languages, tools, and technologies, "
             "but I particularly enjoy thinking about scalable, distributed systems and full-stack web development. "
             "For example, this website is itself a "<A href="/projects#this-site">"full-stack Rust web app"</A>"."
         </p>
