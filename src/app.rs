@@ -28,7 +28,6 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
                 <meta name="viewport" content="width=device-width, initial-scale=1"/>
                 <link rel="stylesheet" id="leptos" href="/pkg/calebhamilton_org.css"/>
                 <script inner_html=THEME_SCRIPT />
-                <title>{SITE_TITLE}</title>
 
                 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
                 <link rel="icon" type_="image/png" sizes="32x32" href="/favicon-32x32.png" />
@@ -58,6 +57,10 @@ pub fn App() -> impl IntoView {
     provide_meta_context();
 
     view! {
+        // Default title managed by leptos_meta; pages override via <Title/>.
+        // This is the single source of truth for the document title so we
+        // don't end up with a duplicate static <title> in the shell head.
+        <Title text=SITE_TITLE/>
         //  TODO: add real error handling
         <Router>
         <div class="app">

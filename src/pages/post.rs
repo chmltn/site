@@ -67,9 +67,15 @@ pub fn BlogPost() -> impl IntoView {
                     // when it's first served
                     // <Title text={format!("{} - Caleb's Blog", post.metadata.title)}/>
                     // <Meta name="description" content=post.metadata.description/>
-                    <PageMeta title={format!("{} - Caleb's Blog", post.metadata.title.clone())} description=post.metadata.description.clone() />
-                    <Meta name="og:type" content="article"/>
-                    <Meta name="article:published_time" content={post.metadata.created_at.to_rfc3339()}/>
+                    <PageMeta
+                        title={format!("{} - Caleb's Blog", post.metadata.title.clone())}
+                        og_title={post.metadata.title.clone()}
+                        description=post.metadata.description.clone()
+                    />
+                    <Meta name="author" content="Caleb Hamilton"/>
+                    <Meta property="og:type" content="article"/>
+                    <Meta property="article:author" content="Caleb Hamilton"/>
+                    <Meta property="article:published_time" content={post.metadata.created_at.to_rfc3339()}/>
                 }
             })
         })
